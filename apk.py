@@ -29,7 +29,7 @@ embedding_handler = MongoDBEmbeddings(
 )
 
 # Route for health check
-@app.route('/check', methods=['GET'])
+@app.route('/', methods=['GET'])
 def check():
     """API route to check if the service is up and running."""
     return jsonify({"status": "Service is running"}), 200
@@ -115,8 +115,14 @@ def generate_answer(user_input, email, session_id):
     **Tone:** Friendly and professional, like JARVIS from Iron Man.
     
     **Response Rules:**
-    1. Engage conversationally with user inputs.
-    2. For property questions, clarify details such as location, budget, area, and type.
+    1. You have all the customer search history in the search history you will ananyse based on his search histoy what kind of property he is interested in. In history, you will get all the things like, place, price, bedrooms, location etc. for the further question and answering
+    2. When you start chatting, you will ask multiple questions to user (maximum 6) like:
+        i. location: in which location he want to search also the area of location
+        ii. budget: what will be the budget of the user,
+        iii. bedroom: how many bedroom he need to have 
+        iv. amenities: What type of amenities he want nearby like school, college or anything?
+        v. Reason: why he is buying this property for .... or for .....
+    aftter succesfully gathering all the information about the clinet requirements, you will give the properties are listed in these criteria
     
     Example Interactions:
     User: "Hello"
@@ -140,6 +146,10 @@ def generate_answer(user_input, email, session_id):
     save_message_to_mongo(session_id, user_input, assistant_response, email, chat_history_collection)
 
     return assistant_response
+@app.route('/', methods=['POST'])
+def welcome():
+    return "welcome to the chatbot api"
+
 
 @app.route('/chat', methods=['POST'])
 def chat():
